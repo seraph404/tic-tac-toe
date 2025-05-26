@@ -27,8 +27,9 @@ const GameBoard = (() => {
     updateBoard: function (move, marker) {
       // becomes array
       move = move.split(",");
-      let row = move[0];
-      let col = move[1];
+      // account for zero index
+      let row = parseInt(move[0] - 1);
+      let col = parseInt(move[1] - 1);
       board[row][col] = marker;
       // display the board with the new move
       this.displayBoard();
@@ -40,12 +41,55 @@ const GameBoard = (() => {
         for (let col = 0; col < board[row].length; col++) {
           let value = board[row][col];
           if (value === 0) {
-            availableMoves.push(row + "," + col);
+            // account for zero index
+            availableMoves.push(row + 1 + "," + (col + 1));
           }
         }
       }
       // return an array of available moves
       return availableMoves;
+    },
+    checkForWinner: function () {
+      // check rows
+      for (let row = 0; row < 3; row++) {
+        if (
+          board[row][0] !== 0 &&
+          board[row][0] === board[row][1] &&
+          board[row][1] === board[row][2]
+        ) {
+          return board[row][0]; // return marker of winner
+        }
+      }
+
+      // check columns
+      for (let col = 0; col < 3; col++) {
+        if (
+          board[0][col] !== 0 &&
+          board[0][col] === board[1][col] &&
+          board[1][col] === board[2][col]
+        ) {
+          return board[0][col];
+        }
+      }
+
+      // check diagonals
+      if (
+        board[0][0] !== 0 &&
+        board[0][0] === board[1][1] &&
+        board[1][1] === board[2][2]
+      ) {
+        return board[0][0];
+      }
+
+      if (
+        board[0][2] !== 0 &&
+        board[0][2] === board[1][1] &&
+        board[1][1] === board[2][0]
+      ) {
+        return board[0][2];
+      }
+
+      return null; // no winner yet
     },
   };
 })();
@@ -82,27 +126,37 @@ const initializeGame = (name) => {
   }
 
   function playTurn() {
-    if (currentPlayer === player1) {
-      getPlayerMove();
-      switchPlayer();
+    const winner = GameBoard.checkForWinner();
+    if (!winner) {
+      if (currentPlayer === player1) {
+        getPlayerMove();
+        switchPlayer();
+      } else {
+        getComputerMove();
+        switchPlayer();
+      }
     } else {
-      getComputerMove();
-      switchPlayer();
+      console.log("We have a winner!");
+      const winningPlayer = winner === player1.marker ? player1 : player2;
+      console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
     }
   }
 
   function switchPlayer() {
+    console.log("Switching player...");
     if (currentPlayer === player1) {
-      currentPlayer === player2;
+      currentPlayer = player2;
+      playTurn();
     } else {
-      currentPlayer === player1;
+      currentPlayer = player1;
+      playTurn();
     }
   }
 
   GameBoard.createBoard();
   GameBoard.displayBoard();
   decideFirstPlayer([player1, player2]);
-  //playTurn();
+  playTurn();
   //getPlayerMove();
   //getComputerMove();
 
