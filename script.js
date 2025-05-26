@@ -33,6 +33,20 @@ const GameBoard = (() => {
       // display the board with the new move
       this.displayBoard();
     },
+    getAvailableMoves: function () {
+      let availableMoves = [];
+      // loop through the board
+      for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+          let value = board[row][col];
+          if (value === 0) {
+            availableMoves.push(row + "," + col);
+          }
+        }
+      }
+      // return an array of available moves
+      return availableMoves;
+    },
   };
 })();
 
@@ -54,12 +68,15 @@ const initializeGame = (name) => {
   }
 
   function getComputerMove() {
-    // stuff here
+    const availableMoves = GameBoard.getAvailableMoves();
+    const index = Math.floor(Math.random() * availableMoves.length);
+    GameBoard.updateBoard(availableMoves[index], "O");
   }
 
   GameBoard.createBoard();
   GameBoard.displayBoard();
-  getPlayerMove();
+  //getPlayerMove();
+  //getComputerMove();
 
   return {
     board: GameBoard,
