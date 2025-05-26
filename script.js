@@ -4,16 +4,13 @@ const GameBoard = (() => {
   return {
     // this creates the board array
     createBoard: function () {
-      // creates the gameboard 2D array
-      let rows = 3;
-      let columns = 3;
-      for (let i = 0; i < rows; i++) {
+      board.length = 0; // clear previous contents
+      for (let i = 0; i < 3; i++) {
         board[i] = [];
-        for (let j = 0; j < columns; j++) {
+        for (let j = 0; j < 3; j++) {
           board[i][j] = 0;
         }
       }
-
       return board;
     },
     displayBoard: function () {
@@ -25,8 +22,6 @@ const GameBoard = (() => {
       });
     },
     updateBoard: function (move, marker) {
-      // becomes array
-      move = move.split(",");
       // account for zero index
       let row = parseInt(move[0]) - 1;
       let col = parseInt(move[1]) - 1;
@@ -115,14 +110,50 @@ const initializeGame = (name) => {
 
   function getPlayerMove() {
     let playerMove = prompt("Enter your move as 'row,column':");
-    //console.log(playerMove);
-    GameBoard.updateBoard(playerMove, "X");
+
+    // check for empty input or cancel
+    if (!playerMove) {
+      console.log("No input received. Please try again.");
+      return getPlayerMove();
+    }
+
+    // validate input
+    playerMove = playerMove.trim(); // accounts for whitespace
+    // becomes array
+    const parts = playerMove.split(",");
+
+    if (parts.length !== 2) {
+      console.log("Invalid format. Use 'row,column' format (e.g., 2,3).");
+      return getPlayerMove();
+    }
+
+    const row = parseInt(parts[0], 10);
+    const col = parseInt(parts[1], 10);
+    if (isNaN(row) || isNaN(col) || row < 1 || row > 3 || col < 1 || col > 3) {
+      console.log("Rows and columns must be numbers between 1 and 3.");
+      return getPlayerMove();
+    }
+
+    const board = GameBoard.getAvailableMoves();
+    if (!board.includes(`${row},${col}`)) {
+      console.log("That spot is already taken. Try a different move.");
+      return getPlayerMove();
+    }
+
+    GameBoard.updateBoard([row, col], currentPlayer.marker);
+    console.log("row: " + row);
+    console.log("col: " + col);
+    console.log("marker: " + currentPlayer.marker);
+    switchPlayer();
   }
 
   function getComputerMove() {
     const availableMoves = GameBoard.getAvailableMoves();
     const index = Math.floor(Math.random() * availableMoves.length);
-    GameBoard.updateBoard(availableMoves[index], "O");
+    const moveString = availableMoves[index];
+    const moveParts = moveString.split(",").map(Number);
+    GameBoard.updateBoard(moveParts, currentPlayer.marker);
+    switchPlayer();
   }
 
   function playTurn() {
@@ -130,10 +161,8 @@ const initializeGame = (name) => {
     if (!winner) {
       if (currentPlayer === player1) {
         getPlayerMove();
-        switchPlayer();
       } else {
         getComputerMove();
-        switchPlayer();
       }
     } else {
       console.log("We have a winner!");
@@ -155,7 +184,7 @@ const initializeGame = (name) => {
 
   GameBoard.createBoard();
   GameBoard.displayBoard();
-  decideFirstPlayer([player1, player2]);
+  currentPlayer = decideFirstPlayer([player1, player2]);
   playTurn();
   //getPlayerMove();
   //getComputerMove();
