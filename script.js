@@ -1,8 +1,9 @@
 const GameBoard = (() => {
+  // private variable
   const board = [];
 
   return {
-    // this creates the board array
+    // this creates a 3x3 grid as a 2D array with 0 as a starting value
     createBoard: function () {
       board.length = 0; // clear previous contents
       for (let i = 0; i < 3; i++) {
@@ -13,9 +14,11 @@ const GameBoard = (() => {
       }
       return board;
     },
+    // creates a board to be displayed during console.log
     displayBoard: function () {
       board.forEach((row, i) => {
         console.log(
+          // adds a number in front of each row
           `${i + 1}: ` +
             row.map((cell) => (cell === 0 ? "-" : cell)).join(" | ")
         );
@@ -26,8 +29,6 @@ const GameBoard = (() => {
       let row = parseInt(move[0]) - 1;
       let col = parseInt(move[1]) - 1;
       board[row][col] = marker;
-      // display the board with the new move
-      this.displayBoard();
     },
     getAvailableMoves: function () {
       let availableMoves = [];
@@ -141,6 +142,7 @@ const initializeGame = (name) => {
     }
 
     GameBoard.updateBoard([row, col], currentPlayer.marker);
+    GameBoard.displayBoard();
     console.log("row: " + row);
     console.log("col: " + col);
     console.log("marker: " + currentPlayer.marker);
@@ -153,18 +155,26 @@ const initializeGame = (name) => {
     const moveString = availableMoves[index];
     const moveParts = moveString.split(",").map(Number);
     GameBoard.updateBoard(moveParts, currentPlayer.marker);
+    GameBoard.displayBoard();
     switchPlayer();
   }
 
   function playTurn() {
+    let gameOver = false;
     const winner = GameBoard.checkForWinner();
     if (!winner) {
+      // check for draw
+      if (GameBoard.getAvailableMoves().length === 0) {
+        console.log("It's a draw!");
+        return;
+      }
       if (currentPlayer === player1) {
         getPlayerMove();
       } else {
         getComputerMove();
       }
     } else {
+      gameOver = true;
       console.log("We have a winner!");
       const winningPlayer = winner === player1.marker ? player1 : player2;
       console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
