@@ -16,6 +16,7 @@ const GameBoard = (() => {
     },
     // creates a board to be displayed during console.log
     displayBoard: function () {
+      //console.trace("displayBoard was called from:");
       board.forEach((row, i) => {
         console.log(
           // adds a number in front of each row
@@ -95,6 +96,9 @@ const createPlayer = (name, marker) => {
 };
 
 const initializeGame = (name) => {
+  GameBoard.createBoard();
+  console.log("Game board:");
+  GameBoard.displayBoard();
   // identify player2 marker based on input
   let playerTwoMarker;
   const player1 = createPlayer(name, "X");
@@ -140,9 +144,10 @@ const initializeGame = (name) => {
       console.log("That spot is already taken. Try a different move.");
       return getPlayerMove();
     }
-
+    console.log(
+      `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
+    );
     GameBoard.updateBoard([row, col], currentPlayer.marker);
-    GameBoard.displayBoard();
 
     switchPlayer();
   }
@@ -151,7 +156,13 @@ const initializeGame = (name) => {
     const availableMoves = GameBoard.getAvailableMoves();
     const index = Math.floor(Math.random() * availableMoves.length);
     const moveString = availableMoves[index];
-    const moveParts = moveString.split(",").map(Number);
+    let moveParts = moveString.split(",");
+    const row = moveParts[0];
+    const col = moveParts[1];
+    console.log(
+      `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
+    );
+    moveParts = moveParts.map(Number);
     GameBoard.updateBoard(moveParts, currentPlayer.marker);
     GameBoard.displayBoard();
     switchPlayer();
@@ -180,7 +191,6 @@ const initializeGame = (name) => {
   }
 
   function switchPlayer() {
-    console.log("Switching player...");
     if (currentPlayer === player1) {
       currentPlayer = player2;
       playTurn();
@@ -190,12 +200,9 @@ const initializeGame = (name) => {
     }
   }
 
-  GameBoard.createBoard();
-  GameBoard.displayBoard();
+  //GameBoard.displayBoard();
   currentPlayer = decideFirstPlayer([player1, player2]);
   playTurn();
-  //getPlayerMove();
-  //getComputerMove();
 
   return {
     board: GameBoard,
