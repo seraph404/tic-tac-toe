@@ -60,6 +60,14 @@ const initializeGame = (name) => {
   const player1 = createPlayer(name, "X");
   playerTwoMarker = player1.marker === "X" ? "O" : "X";
   const player2 = createPlayer("Player 2", playerTwoMarker);
+  let currentPlayer;
+
+  function decideFirstPlayer(players) {
+    const randomIndex = Math.floor(Math.random() * players.length);
+    console.log(`The first player is ${players[randomIndex].name}!`);
+    currentPlayer = players[randomIndex];
+    return players[randomIndex];
+  }
 
   function getPlayerMove() {
     let playerMove = prompt("Enter your move as 'row,column':");
@@ -73,8 +81,28 @@ const initializeGame = (name) => {
     GameBoard.updateBoard(availableMoves[index], "O");
   }
 
+  function playTurn() {
+    if (currentPlayer === player1) {
+      getPlayerMove();
+      switchPlayer();
+    } else {
+      getComputerMove();
+      switchPlayer();
+    }
+  }
+
+  function switchPlayer() {
+    if (currentPlayer === player1) {
+      currentPlayer === player2;
+    } else {
+      currentPlayer === player1;
+    }
+  }
+
   GameBoard.createBoard();
   GameBoard.displayBoard();
+  decideFirstPlayer([player1, player2]);
+  //playTurn();
   //getPlayerMove();
   //getComputerMove();
 
