@@ -16,15 +16,32 @@ const GameBoard = (() => {
     },
     // creates a board to be displayed during console.log
     displayBoard: function () {
-      //console.trace("displayBoard was called from:");
-      board.forEach((row, i) => {
-        console.log(
-          // adds a number in front of each row
-          `${i + 1}: ` +
-            row.map((cell) => (cell === 0 ? "-" : cell)).join(" | ")
-        );
-      });
+      // == CONSOLE-ONLY VERSION ==
+      // board.forEach((row, i) => {
+      //   console.log(
+      //     // adds a number in front of each row
+      //     `${i + 1}: ` +
+      //       row.map((cell) => (cell === 0 ? "-" : cell)).join(" | ")
+      //   );
+      // });
+
+      // add grid squares to DOM
+      const gameBoardDiv = document.querySelector("#game-board");
+      // clear any existing content
+      gameBoardDiv.innerHTML = "";
+      // create the divs and use data attributes to track positioning
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          const div = document.createElement("div");
+          div.classList.add("cell");
+          div.dataset.row = i + 1; // account for zero index
+          div.dataset.col = j + 1;
+          div.textContent = board[i][j] === 0 ? "" : board[i][j]; // adds to page
+          gameBoardDiv.appendChild(div);
+        }
+      }
     },
+    // this updates the private board variable
     updateBoard: function (move, marker) {
       // account for zero index
       let row = parseInt(move[0]) - 1;
@@ -97,8 +114,22 @@ const createPlayer = (name, marker) => {
 
 const initializeGame = (name) => {
   GameBoard.createBoard();
-  console.log("Game board:");
   GameBoard.displayBoard();
+
+  // add event listeners for clicks on grid
+  // this is now the player input
+  const gameBoardDiv = document.querySelector("#game-board");
+  gameBoardDiv.addEventListener("click", (e) => {
+    const row = parseInt(e.target.dataset.row);
+    const col = parseInt(e.target.dataset.col);
+
+    if (e.target.textContent === "") {
+      GameBoard.updateBoard([row, col], currentPlayer.marker);
+      GameBoard.displayBoard();
+      switchPlayer();
+    }
+  });
+
   // identify player2 marker based on input
   let playerTwoMarker;
   const player1 = createPlayer(name, "X");
@@ -108,49 +139,51 @@ const initializeGame = (name) => {
 
   function decideFirstPlayer(players) {
     const randomIndex = Math.floor(Math.random() * players.length);
-    console.log(`The first player is ${players[randomIndex].name}!`);
+    //console.log(`The first player is ${players[randomIndex].name}!`);
     currentPlayer = players[randomIndex];
     return players[randomIndex];
   }
 
-  function getPlayerMove() {
-    let playerMove = prompt("Enter your move as 'row,column':");
+  // == CONSOLE-ONLY VERSION ==
 
-    // check for empty input or cancel
-    if (!playerMove) {
-      console.log("No input received. Please try again.");
-      return getPlayerMove();
-    }
+  // function getPlayerMove(move) {
+  //   let playerMove = prompt("Enter your move as 'row,column':");
 
-    // validate input
-    playerMove = playerMove.trim(); // accounts for whitespace
-    // becomes array
-    const parts = playerMove.split(",");
+  //   // check for empty input or cancel
+  //   if (!playerMove) {
+  //     console.log("No input received. Please try again.");
+  //     return getPlayerMove();
+  //   }
 
-    if (parts.length !== 2) {
-      console.log("Invalid format. Use 'row,column' format (e.g., 2,3).");
-      return getPlayerMove();
-    }
+  //   // validate input
+  //   playerMove = playerMove.trim(); // accounts for whitespace
+  //   // becomes array
+  //   const parts = playerMove.split(",");
 
-    const row = parseInt(parts[0], 10);
-    const col = parseInt(parts[1], 10);
-    if (isNaN(row) || isNaN(col) || row < 1 || row > 3 || col < 1 || col > 3) {
-      console.log("Rows and columns must be numbers between 1 and 3.");
-      return getPlayerMove();
-    }
+  //   if (parts.length !== 2) {
+  //     console.log("Invalid format. Use 'row,column' format (e.g., 2,3).");
+  //     return getPlayerMove();
+  //   }
 
-    const board = GameBoard.getAvailableMoves();
-    if (!board.includes(`${row},${col}`)) {
-      console.log("That spot is already taken. Try a different move.");
-      return getPlayerMove();
-    }
-    console.log(
-      `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
-    );
-    GameBoard.updateBoard([row, col], currentPlayer.marker);
+  //   const row = parseInt(parts[0], 10);
+  //   const col = parseInt(parts[1], 10);
+  //   if (isNaN(row) || isNaN(col) || row < 1 || row > 3 || col < 1 || col > 3) {
+  //     console.log("Rows and columns must be numbers between 1 and 3.");
+  //     return getPlayerMove();
+  //   }
 
-    switchPlayer();
-  }
+  //   const board = GameBoard.getAvailableMoves();
+  //   if (!board.includes(`${row},${col}`)) {
+  //     console.log("That spot is already taken. Try a different move.");
+  //     return getPlayerMove();
+  //   }
+  //   console.log(
+  //     `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
+  //   );
+  //   GameBoard.updateBoard([row, col], currentPlayer.marker);
+
+  //   switchPlayer();
+  // }
 
   function getComputerMove() {
     const availableMoves = GameBoard.getAvailableMoves();
@@ -159,9 +192,9 @@ const initializeGame = (name) => {
     let moveParts = moveString.split(",");
     const row = moveParts[0];
     const col = moveParts[1];
-    console.log(
-      `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
-    );
+    //console.log(
+    //  `${currentPlayer.name} played ${currentPlayer.marker} at ${row}, ${col}.`
+    //);
     moveParts = moveParts.map(Number);
     GameBoard.updateBoard(moveParts, currentPlayer.marker);
     GameBoard.displayBoard();
@@ -174,19 +207,17 @@ const initializeGame = (name) => {
     if (!winner) {
       // check for draw
       if (GameBoard.getAvailableMoves().length === 0) {
-        console.log("It's a draw!");
+        //console.log("It's a draw!");
         return;
       }
-      if (currentPlayer === player1) {
-        getPlayerMove();
-      } else {
+      if (currentPlayer === player2) {
         getComputerMove();
       }
     } else {
       gameOver = true;
-      console.log("We have a winner!");
+      //console.log("We have a winner!");
       const winningPlayer = winner === player1.marker ? player1 : player2;
-      console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
+      //console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
     }
   }
 
@@ -200,7 +231,6 @@ const initializeGame = (name) => {
     }
   }
 
-  //GameBoard.displayBoard();
   currentPlayer = decideFirstPlayer([player1, player2]);
   playTurn();
 
@@ -210,12 +240,21 @@ const initializeGame = (name) => {
   };
 };
 
-const welcomeText = (() => {
-  console.log("====================");
-  console.log("Welcome to Tic Tac Toe!");
-  console.log("To begin, you can use the initializeGame function.");
-  console.log(
-    "You'll want to provide your name and the marker you'd like to use as arguments."
-  );
-  console.log("Like this: initializeGame('Seraphina', 'X')");
-})();
+// == CONSOLE-ONLY VERSION ==
+// const welcomeText = (() => {
+//   console.log("====================");
+//   console.log("Welcome to Tic Tac Toe!");
+//   console.log("To begin, you can use the initializeGame function.");
+//   console.log(
+//     "You'll want to provide your name and the marker you'd like to use as arguments."
+//   );
+//   console.log("Like this: initializeGame('Seraphina', 'X')");
+// })();
+
+GameBoard.createBoard();
+GameBoard.displayBoard();
+
+const newGameBtn = document.querySelector("#new-game");
+newGameBtn.addEventListener("click", (e) => {
+  initializeGame("Seraphina");
+});
