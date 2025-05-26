@@ -143,9 +143,7 @@ const initializeGame = (name) => {
 
     GameBoard.updateBoard([row, col], currentPlayer.marker);
     GameBoard.displayBoard();
-    console.log("row: " + row);
-    console.log("col: " + col);
-    console.log("marker: " + currentPlayer.marker);
+
     switchPlayer();
   }
 
@@ -205,14 +203,12 @@ const initializeGame = (name) => {
   };
 };
 
-// const welcomeText = (() => {
-//   console.log("====================");
-//   console.log("Welcome to Tic Tac Toe!");
-//   console.log("To begin, you can use the initializeGame function.");
-//   console.log(
-//     "You'll want to provide your name and the marker you'd like to use as arguments."
-//   );
-//   console.log("Like this: initializeGame('Seraphina', 'X')");
-// })();
-
-initializeGame("Seraphina", "X");
+const welcomeText = (() => {
+  console.log("====================");
+  console.log("Welcome to Tic Tac Toe!");
+  console.log("To begin, you can use the initializeGame function.");
+  console.log(
+    "You'll want to provide your name and the marker you'd like to use as arguments."
+  );
+  console.log("Like this: initializeGame('Seraphina', 'X')");
+})();
