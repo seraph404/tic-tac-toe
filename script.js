@@ -28,8 +28,8 @@ const GameBoard = (() => {
       // becomes array
       move = move.split(",");
       // account for zero index
-      let row = parseInt(move[0] - 1);
-      let col = parseInt(move[1] - 1);
+      let row = parseInt(move[0]) - 1;
+      let col = parseInt(move[1]) - 1;
       board[row][col] = marker;
       // display the board with the new move
       this.displayBoard();
