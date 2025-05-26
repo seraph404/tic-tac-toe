@@ -24,6 +24,15 @@ const GameBoard = (() => {
         );
       });
     },
+    updateBoard: function (move, marker) {
+      // becomes array
+      move = move.split(",");
+      let row = move[0];
+      let col = move[1];
+      board[row][col] = marker;
+      // display the board with the new move
+      this.displayBoard();
+    },
   };
 })();
 
@@ -38,12 +47,19 @@ const initializeGame = (name) => {
   playerTwoMarker = player1.marker === "X" ? "O" : "X";
   const player2 = createPlayer("Player 2", playerTwoMarker);
 
-  function handlePlayerMove() {
-    console.log("Time to handle moves");
+  function getPlayerMove() {
+    let playerMove = prompt("Enter your move as 'row,column':");
+    //console.log(playerMove);
+    GameBoard.updateBoard(playerMove, "X");
+  }
+
+  function getComputerMove() {
+    // stuff here
   }
 
   GameBoard.createBoard();
   GameBoard.displayBoard();
+  getPlayerMove();
 
   return {
     board: GameBoard,
