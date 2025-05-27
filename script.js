@@ -1,110 +1,106 @@
 const GameBoard = (() => {
-  // private variable
   const board = [];
 
+  function createBoard() {
+    board.length = 0; // clear previous contents
+    for (let i = 0; i < 3; i++) {
+      board[i] = [];
+      for (let j = 0; j < 3; j++) {
+        board[i][j] = 0;
+      }
+    }
+    return board;
+  }
+
+  function displayBoard() {
+    // add grid squares to DOM
+    const gameBoardDiv = document.querySelector("#game-board");
+    // clear any existing content
+    gameBoardDiv.innerHTML = "";
+    // create the divs and use data attributes to track positioning
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.dataset.row = i + 1; // account for zero index
+        div.dataset.col = j + 1;
+        div.textContent = board[i][j] === 0 ? "" : board[i][j]; // adds to page
+        gameBoardDiv.appendChild(div);
+      }
+    }
+  }
+
+  function updateBoard(move, marker) {
+    // account for zero index
+    let row = parseInt(move[0]) - 1;
+    let col = parseInt(move[1]) - 1;
+    board[row][col] = marker;
+  }
+  function getAvailableMoves() {
+    let availableMoves = [];
+    // loop through the board
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        let value = board[row][col];
+        if (value === 0) {
+          // account for zero index
+          availableMoves.push(row + 1 + "," + (col + 1));
+        }
+      }
+    }
+    // return an array of available moves
+    return availableMoves;
+  }
+
+  function checkForWinner() {
+    // check rows
+    for (let row = 0; row < 3; row++) {
+      if (
+        board[row][0] !== 0 &&
+        board[row][0] === board[row][1] &&
+        board[row][1] === board[row][2]
+      ) {
+        return board[row][0]; // return marker of winner
+      }
+    }
+
+    // check columns
+    for (let col = 0; col < 3; col++) {
+      if (
+        board[0][col] !== 0 &&
+        board[0][col] === board[1][col] &&
+        board[1][col] === board[2][col]
+      ) {
+        return board[0][col];
+      }
+    }
+
+    // check diagonals
+    if (
+      board[0][0] !== 0 &&
+      board[0][0] === board[1][1] &&
+      board[1][1] === board[2][2]
+    ) {
+      return board[0][0];
+    }
+
+    if (
+      board[0][2] !== 0 &&
+      board[0][2] === board[1][1] &&
+      board[1][1] === board[2][0]
+    ) {
+      return board[0][2];
+    }
+
+    return null; // no winner yet
+  }
+
   return {
-    // this creates a 3x3 grid as a 2D array with 0 as a starting value
-    createBoard: function () {
-      board.length = 0; // clear previous contents
-      for (let i = 0; i < 3; i++) {
-        board[i] = [];
-        for (let j = 0; j < 3; j++) {
-          board[i][j] = 0;
-        }
-      }
-      return board;
-    },
-    // creates a board to be displayed during console.log
-    displayBoard: function () {
-      // == CONSOLE-ONLY VERSION ==
-      // board.forEach((row, i) => {
-      //   console.log(
-      //     // adds a number in front of each row
-      //     `${i + 1}: ` +
-      //       row.map((cell) => (cell === 0 ? "-" : cell)).join(" | ")
-      //   );
-      // });
-
-      // add grid squares to DOM
-      const gameBoardDiv = document.querySelector("#game-board");
-      // clear any existing content
-      gameBoardDiv.innerHTML = "";
-      // create the divs and use data attributes to track positioning
-      for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-          const div = document.createElement("div");
-          div.classList.add("cell");
-          div.dataset.row = i + 1; // account for zero index
-          div.dataset.col = j + 1;
-          div.textContent = board[i][j] === 0 ? "" : board[i][j]; // adds to page
-          gameBoardDiv.appendChild(div);
-        }
-      }
-    },
-    // this updates the private board variable
-    updateBoard: function (move, marker) {
-      // account for zero index
-      let row = parseInt(move[0]) - 1;
-      let col = parseInt(move[1]) - 1;
-      board[row][col] = marker;
-    },
-    getAvailableMoves: function () {
-      let availableMoves = [];
-      // loop through the board
-      for (let row = 0; row < board.length; row++) {
-        for (let col = 0; col < board[row].length; col++) {
-          let value = board[row][col];
-          if (value === 0) {
-            // account for zero index
-            availableMoves.push(row + 1 + "," + (col + 1));
-          }
-        }
-      }
-      // return an array of available moves
-      return availableMoves;
-    },
-    checkForWinner: function () {
-      // check rows
-      for (let row = 0; row < 3; row++) {
-        if (
-          board[row][0] !== 0 &&
-          board[row][0] === board[row][1] &&
-          board[row][1] === board[row][2]
-        ) {
-          return board[row][0]; // return marker of winner
-        }
-      }
-
-      // check columns
-      for (let col = 0; col < 3; col++) {
-        if (
-          board[0][col] !== 0 &&
-          board[0][col] === board[1][col] &&
-          board[1][col] === board[2][col]
-        ) {
-          return board[0][col];
-        }
-      }
-
-      // check diagonals
-      if (
-        board[0][0] !== 0 &&
-        board[0][0] === board[1][1] &&
-        board[1][1] === board[2][2]
-      ) {
-        return board[0][0];
-      }
-
-      if (
-        board[0][2] !== 0 &&
-        board[0][2] === board[1][1] &&
-        board[1][1] === board[2][0]
-      ) {
-        return board[0][2];
-      }
-
-      return null; // no winner yet
-    },
+    createBoard,
+    displayBoard,
+    updateBoard,
+    getAvailableMoves,
+    checkForWinner,
   };
 })();
 
@@ -114,8 +110,22 @@ const createPlayer = (name, marker) => {
 
 const initializeGame = (name) => {
   let gameOver = false;
+  let currentPlayer;
   GameBoard.createBoard();
   GameBoard.displayBoard();
+
+  // identify player2 marker based on input
+  let playerTwoMarker;
+  const player1 = createPlayer(name, "X");
+  playerTwoMarker = player1.marker === "X" ? "O" : "X";
+  const player2 = createPlayer("Player 2", playerTwoMarker);
+
+  function decideFirstPlayer(players) {
+    const randomIndex = Math.floor(Math.random() * players.length);
+    //console.log(`The first player is ${players[randomIndex].name}!`);
+    currentPlayer = players[randomIndex];
+    return players[randomIndex];
+  }
 
   // add event listeners for clicks on grid
   // this is now the player input
@@ -132,20 +142,6 @@ const initializeGame = (name) => {
       playTurn();
     }
   });
-
-  // identify player2 marker based on input
-  let playerTwoMarker;
-  const player1 = createPlayer(name, "X");
-  playerTwoMarker = player1.marker === "X" ? "O" : "X";
-  const player2 = createPlayer("Player 2", playerTwoMarker);
-  let currentPlayer;
-
-  function decideFirstPlayer(players) {
-    const randomIndex = Math.floor(Math.random() * players.length);
-    //console.log(`The first player is ${players[randomIndex].name}!`);
-    currentPlayer = players[randomIndex];
-    return players[randomIndex];
-  }
 
   // == CONSOLE-ONLY VERSION ==
 
@@ -201,7 +197,6 @@ const initializeGame = (name) => {
     moveParts = moveParts.map(Number);
     GameBoard.updateBoard(moveParts, currentPlayer.marker);
     GameBoard.displayBoard();
-    switchPlayer();
   }
 
   function playTurn() {
@@ -265,3 +260,23 @@ const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", (e) => {
   initializeGame("Seraphina");
 });
+
+// == NOTES ==
+// - The webpage loads
+// - GameBoard.createBoard() and GameBoard.displayBoard() are executed.
+// - The user selects 'New Game' button.
+// - initializeGame() is executed.
+// - The gameOver variable is set to false.
+// - The currentPlayer variable is created.
+// - The players are created.
+// - An eventListener is applied to the gameBoardDiv,
+// - currentPlayer is decided at random via decideFirstPlayer().
+// - If the currentPlayer is player1, click anywhere on grid to place marker.
+// - playTurn() is executed.
+// - UI elements are created for player feedback.
+// - switchPlayer() is executed.
+// - The currentPlayer is reassigned.
+// - If player2, getComputerMove() is executed.
+// - Available moves are calculated with getAvailableMoves();
+// - An available move is chosen randomly.
+// - The move is logged to the board array and applied to the page.
