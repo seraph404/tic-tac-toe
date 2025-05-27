@@ -113,6 +113,7 @@ const createPlayer = (name, marker) => {
 };
 
 const initializeGame = (name) => {
+  let gameOver = false;
   GameBoard.createBoard();
   GameBoard.displayBoard();
 
@@ -201,13 +202,12 @@ const initializeGame = (name) => {
     switchPlayer();
   }
 
-  function playTurn() {
-    let gameOver = false;
+  function playTurn(gameOver) {
     const winner = GameBoard.checkForWinner();
     if (!winner) {
       // check for draw
       if (GameBoard.getAvailableMoves().length === 0) {
-        //console.log("It's a draw!");
+        console.log("It's a draw!");
         return;
       }
       if (currentPlayer === player2) {
@@ -215,28 +215,33 @@ const initializeGame = (name) => {
       }
     } else {
       gameOver = true;
-      //console.log("We have a winner!");
       const winningPlayer = winner === player1.marker ? player1 : player2;
-      //console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
+      const outputDiv = document.querySelector("#output");
+      const p = document.createElement("p");
+      p.textContent = `🎉 ${winningPlayer.name} wins with '${winner}'!`;
+      const gameBoardDiv = document.querySelector("#game-board");
+      outputDiv.append(p);
+      console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
     }
   }
 
   function switchPlayer() {
     if (currentPlayer === player1) {
       currentPlayer = player2;
-      playTurn();
+      playTurn(gameOver);
     } else {
       currentPlayer = player1;
-      playTurn();
+      playTurn(gameOver);
     }
   }
 
   currentPlayer = decideFirstPlayer([player1, player2]);
-  playTurn();
+  playTurn(gameOver);
 
   return {
     board: GameBoard,
     players: [player1, player2],
+    gameOver,
   };
 };
 
