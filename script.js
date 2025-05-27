@@ -136,10 +136,8 @@ const initializeGame = (name) => {
     const row = parseInt(e.target.dataset.row);
     const col = parseInt(e.target.dataset.col);
 
-    if (e.target.textContent === "") {
-      GameBoard.updateBoard([row, col], currentPlayer.marker);
-      GameBoard.displayBoard();
-      playTurn();
+    if (e.target.textContent === "" && currentPlayer === player1) {
+      playTurn([row, col]);
     }
   });
 
@@ -199,37 +197,49 @@ const initializeGame = (name) => {
     GameBoard.displayBoard();
   }
 
-  function playTurn() {
+  function playTurn(move = null) {
     const outputDiv = document.querySelector("#output");
     const p = document.createElement("p");
 
-    const winner = GameBoard.checkForWinner();
+    if (gameOver) return;
 
-    if (!winner) {
-      // check for draw
-      if (GameBoard.getAvailableMoves().length === 0) {
-        p.textContent = "Game over! It's a draw!";
-        outputDiv.append(p);
-        return;
-      }
-    } else {
+    if (currentPlayer === player1 && move) {
+      GameBoard.updateBoard(move, currentPlayer.marker);
+      GameBoard.displayBoard();
+    }
+
+    if (currentPlayer === player2) {
+      getComputerMove();
+      GameBoard.displayBoard();
+    }
+
+    const winner = GameBoard.checkForWinner();
+    if (winner) {
       gameOver = true;
       const winningPlayer = winner === player1.marker ? player1 : player2;
       p.textContent = `🎉 ${winningPlayer.name} wins with '${winner}'!`;
-      const gameBoardDiv = document.querySelector("#game-board");
-      console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
       outputDiv.append(p);
+      return;
     }
+
+    if (GameBoard.getAvailableMoves().length === 0) {
+      gameOver = true;
+      p.textContent = "Game over! It's a draw!";
+      outputDiv.append(p);
+      return;
+    }
+
     switchPlayer();
+
+    // If it's now the computer's turn, play again after a short delay
+    if (currentPlayer === player2) {
+      setTimeout(() => playTurn(), 300);
+    }
   }
 
   function switchPlayer() {
     // switch the current player
     currentPlayer = currentPlayer === player1 ? player2 : player1;
-
-    if (currentPlayer === player2) {
-      getComputerMove();
-    }
   }
 
   currentPlayer = decideFirstPlayer([player1, player2]);
