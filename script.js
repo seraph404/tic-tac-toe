@@ -129,7 +129,7 @@ const initializeGame = (name) => {
     if (e.target.textContent === "") {
       GameBoard.updateBoard([row, col], currentPlayer.marker);
       GameBoard.displayBoard();
-      switchPlayer();
+      playTurn();
     }
   });
 
@@ -217,26 +217,23 @@ const initializeGame = (name) => {
         outputDiv.append(p);
         return;
       }
-      if (currentPlayer === player2) {
-        getComputerMove();
-      }
     } else {
       gameOver = true;
       const winningPlayer = winner === player1.marker ? player1 : player2;
       p.textContent = `🎉 ${winningPlayer.name} wins with '${winner}'!`;
       const gameBoardDiv = document.querySelector("#game-board");
       console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
+      outputDiv.append(p);
     }
-    outputDiv.append(p);
+    switchPlayer();
   }
 
   function switchPlayer() {
-    if (currentPlayer === player1) {
-      currentPlayer = player2;
-      playTurn();
-    } else {
-      currentPlayer = player1;
-      playTurn();
+    // switch the current player
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+
+    if (currentPlayer === player2) {
+      getComputerMove();
     }
   }
 
