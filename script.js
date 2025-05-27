@@ -121,6 +121,8 @@ const initializeGame = (name) => {
   // this is now the player input
   const gameBoardDiv = document.querySelector("#game-board");
   gameBoardDiv.addEventListener("click", (e) => {
+    if (gameOver) return;
+
     const row = parseInt(e.target.dataset.row);
     const col = parseInt(e.target.dataset.col);
 
@@ -202,7 +204,7 @@ const initializeGame = (name) => {
     switchPlayer();
   }
 
-  function playTurn(gameOver) {
+  function playTurn() {
     const winner = GameBoard.checkForWinner();
     if (!winner) {
       // check for draw
@@ -228,15 +230,15 @@ const initializeGame = (name) => {
   function switchPlayer() {
     if (currentPlayer === player1) {
       currentPlayer = player2;
-      playTurn(gameOver);
+      playTurn();
     } else {
       currentPlayer = player1;
-      playTurn(gameOver);
+      playTurn();
     }
   }
 
   currentPlayer = decideFirstPlayer([player1, player2]);
-  playTurn(gameOver);
+  playTurn();
 
   return {
     board: GameBoard,
