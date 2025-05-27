@@ -205,11 +205,16 @@ const initializeGame = (name) => {
   }
 
   function playTurn() {
+    const outputDiv = document.querySelector("#output");
+    const p = document.createElement("p");
+
     const winner = GameBoard.checkForWinner();
+
     if (!winner) {
       // check for draw
       if (GameBoard.getAvailableMoves().length === 0) {
-        console.log("It's a draw!");
+        p.textContent = "Game over! It's a draw!";
+        outputDiv.append(p);
         return;
       }
       if (currentPlayer === player2) {
@@ -218,13 +223,11 @@ const initializeGame = (name) => {
     } else {
       gameOver = true;
       const winningPlayer = winner === player1.marker ? player1 : player2;
-      const outputDiv = document.querySelector("#output");
-      const p = document.createElement("p");
       p.textContent = `🎉 ${winningPlayer.name} wins with '${winner}'!`;
       const gameBoardDiv = document.querySelector("#game-board");
-      outputDiv.append(p);
       console.log(`🎉 ${winningPlayer.name} wins with '${winner}'!`);
     }
+    outputDiv.append(p);
   }
 
   function switchPlayer() {
