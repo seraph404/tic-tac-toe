@@ -1,20 +1,21 @@
 const GameBoard = (() => {
   const GRID_DIMENSION = 3;
-  // let board = [];
+  let board = [];
 
-  // make createBoard()
-  // for (let y = 0; y < GRID_DIMENSION; y++) {
-  //   board[y] = [];
-  //   for (let x = 0; x < GRID_DIMENSION; x++) {
-  //     board[y][x] = 0;
-  //   }
-  // }
+  function createGameboard() {
+    for (let y = 0; y < GRID_DIMENSION; y++) {
+      board[y] = [];
+      for (let x = 0; x < GRID_DIMENSION; x++) {
+        board[y][x] = "_";
+      }
+    }
+  }
 
-  let board = [
-    ["_", "X", "O"],
-    ["O", "_", "X"],
-    ["_", "O", "X"],
-  ];
+  // let board = [
+  //   ["_", "X", "O"],
+  //   ["O", "_", "X"],
+  //   ["_", "O", "X"],
+  // ];
 
   function displayGameboard() {
     console.log(`==== GAMEBOARD ====`);
@@ -38,6 +39,7 @@ const GameBoard = (() => {
   }
 
   return {
+    createGameboard,
     displayGameboard,
     updateGameboard,
   };
@@ -45,5 +47,6 @@ const GameBoard = (() => {
 
 //GameBoard().displayGameboard();
 
+GameBoard.createGameboard();
 GameBoard.displayGameboard();
 GameBoard.updateGameboard([2, 2], "X");
