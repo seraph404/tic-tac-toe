@@ -1,7 +1,7 @@
 const GameBoard = (() => {
   const GRID_DIMENSION = 3;
-
   let board = [];
+
   function createGameboard() {
     for (let y = 0; y < GRID_DIMENSION; y++) {
       board[y] = [];
@@ -24,10 +24,11 @@ const GameBoard = (() => {
 
   function updateGameboard(move, marker) {
     // account for zero index
-    const row = move[0] - 1;
-    const col = move[1] - 1;
+    const row = move[0];
+    const col = move[1];
 
     // add checks here later OR do input sanitization eventually
+    console.log(`board[row][col] is [${row}, ${col}]`);
     board[row][col] = marker;
     displayGameboard();
   }
@@ -57,11 +58,22 @@ const GameBoard = (() => {
     });
   }
 
+  function getAvailableCoords() {
+    let availableCoords = [];
+    board.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        availableCoords.push([y, x]);
+      });
+    });
+    return availableCoords;
+  }
+
   return {
     createGameboard,
     displayGameboard,
     updateGameboard,
     checkForWinner,
+    getAvailableCoords,
   };
 })();
 
@@ -74,9 +86,9 @@ function initializeGame(name, marker) {
   let hasWinner = false;
 
   const playerOne = createPlayer(name, marker);
-  const playerTwo = createPlayer("Computer", "O");
-  // consider choosing the remaining marker not chosen by playerOne
-  // instead of hard-coding O
+
+  const playerTwoMarker = playerOne.marker === "X" ? "O" : "X";
+  const playerTwo = createPlayer("Computer", playerTwoMarker);
 
   let currentPlayer;
   // hard-coding for now
@@ -88,9 +100,23 @@ function initializeGame(name, marker) {
   GameBoard.displayGameboard();
 
   function playTurn(coords) {
-    console.log("hi");
-    console.log(coords);
-    GameBoard.updateGameboard(coords, playerOne.marker);
+    if (currentPlayer === playerOne) {
+      // adjust input coords to account for zero index
+      const adjusted = [coords[0] - 1, coords[1] - 1];
+      GameBoard.updateGameboard(adjusted, playerOne.marker);
+      // if computer turn...
+    } else {
+      // player two actions
+      GameBoard.getAvailableCoords();
+      // choose a move
+      let index = Math.floor(
+        Math.random() * GameBoard.getAvailableCoords().length
+      );
+      GameBoard.updateGameboard(
+        GameBoard.getAvailableCoords()[index],
+        playerTwo.marker
+      );
+    }
   }
 
   function switchPlayer() {
@@ -100,6 +126,7 @@ function initializeGame(name, marker) {
       currentPlayer = playerOne;
     }
     console.log(`It's ${currentPlayer.name}'s turn!`);
+    playTurn();
   }
   playTurn([1, 1]);
   switchPlayer();
