@@ -146,10 +146,41 @@ function initializeGame(name, marker) {
     let index = Math.floor(Math.random() * availableCoords.length);
     const computerMove = availableCoords[index];
 
-    applyMove(computerMove, playerTwo.marker);
+    const success = applyMove(computerMove, playerTwo.marker);
+    if (!success) return;
+
+    evaluateGameState();
+  }
+
+  function isWithinBounds([row, col]) {
+    return row >= 0 && row < 3 && col >= 0 && col < 3;
+  }
+
+  function evaluateGameState() {
+    const winnerFound = GameBoard.checkForWinner();
+    if (winnerFound) {
+      console.log(`${currentPlayer.name} has won!`);
+      gameOver = true;
+      return true;
+    }
+
+    if (GameBoard.isBoardFull()) {
+      console.log("It's a tie!");
+      gameOver = true;
+      return true;
+    }
+
+    return false;
   }
 
   function applyMove(move, marker) {
+    if (!isWithinBounds(move)) {
+      console.log(
+        "Invalid move! Each coordinate must be a number between 1-3."
+      );
+      return false;
+    }
+
     const success = GameBoard.updateGameboard(move, marker);
 
     if (!success) {
@@ -160,6 +191,11 @@ function initializeGame(name, marker) {
   }
 
   function playTurn(coords) {
+    if (gameOver) {
+      console.log(`Game is already over. Please start a new game.`);
+      return;
+    }
+
     if (currentPlayer === playerOne) {
       const success = playHumanTurn(coords);
       if (!success) return;
@@ -167,19 +203,7 @@ function initializeGame(name, marker) {
       playComputerTurn(coords);
     }
 
-    const winnerFound = GameBoard.checkForWinner();
-    if (winnerFound) {
-      console.log(`${currentPlayer.name} has won!`);
-      gameOver = true;
-      return; // end game
-    }
-
-    if (GameBoard.isBoardFull()) {
-      console.log("It's a tie!");
-      gameOver = true;
-      return; // end game
-    }
-
+    if (evaluateGameState()) return;
     switchPlayer();
   }
 
@@ -189,7 +213,7 @@ function initializeGame(name, marker) {
       console.log(`It's ${currentPlayer.name}'s turn!`);
       // this makes the computer player auto-play
       setTimeout(() => {
-        playTurn();
+        if (!gameOver) playTurn();
       }, 1000);
     } else if (currentPlayer === playerTwo) {
       currentPlayer = playerOne;
@@ -214,6 +238,7 @@ function start(name, marker) {
 function play(row, column) {
   if (!window.game) {
     console.log(`Please start a game first!`);
+    return;
   }
   window.game.playTurn([row, column]);
 }
