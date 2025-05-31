@@ -11,13 +11,6 @@ const GameBoard = (() => {
     }
   }
 
-  // hard-coded board for debugging
-  // let board = [
-  //   ["_", "X", "_"],
-  //   ["O", "_", "X"],
-  //   ["_", "O", "X"],
-  // ];
-
   function displayGameboard() {
     let num = 1;
     console.log(`\n    1   2   3`);
@@ -214,7 +207,7 @@ function initializeGame(name, marker) {
   };
 }
 
-// user-friendly wrappers
+// user-friendly wrappers for terminal
 function start(name, marker) {
   window.game = initializeGame(name, marker);
 }
@@ -229,14 +222,3 @@ function play(row, column) {
 console.log(`Welcome to Tic, Tac Toe: Console Edition`);
 console.log(`To begin a game, use start(name, marker)`);
 console.log(`For example: start('Seraphina', 'X')`);
-
-//GameBoard().displayGameboard();
-
-// GameBoard.createGameboard();
-// GameBoard.displayGameboard();
-//GameBoard.checkForWinner();
-// GameBoard.updateGameboard([2, 2], "X");
-//const game = initializeGame("Seraphina", "X");
-
-// notes for testing
-// use game.playTurn([1,1]); syntax for making a move
