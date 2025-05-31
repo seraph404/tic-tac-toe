@@ -66,7 +66,10 @@ const GameBoard = (() => {
     let availableCoords = [];
     board.forEach((row, y) => {
       row.forEach((cell, x) => {
-        availableCoords.push([y, x]);
+        // if the cell is blank
+        if (cell === "_") {
+          availableCoords.push([y, x]);
+        }
       });
     });
     return availableCoords;
@@ -121,7 +124,7 @@ function initializeGame(name, marker) {
   }
 
   function playComputerTurn() {
-    // player two actions
+    // look at the available coordinates
     const availableCoords = GameBoard.getAvailableCoords();
     // choose a move
     let index = Math.floor(Math.random() * availableCoords.length);
