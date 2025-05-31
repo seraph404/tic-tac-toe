@@ -197,9 +197,6 @@ function initializeGame(name, marker) {
     }
   }
 
-  //playTurn([1, 1]);
-  //switchPlayer();
-
   return {
     currentPlayer,
     playTurn,
