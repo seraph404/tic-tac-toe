@@ -65,7 +65,45 @@ const GameBoard = (() => {
   };
 })();
 
-function initializeGame() {
+function createPlayer(name, marker) {
+  return { name, marker };
+}
+
+function initializeGame(name, marker) {
+  // set no winner by default
+  let hasWinner = false;
+
+  const playerOne = createPlayer(name, marker);
+  const playerTwo = createPlayer("Computer", "O");
+  // consider choosing the remaining marker not chosen by playerOne
+  // instead of hard-coding O
+
+  let currentPlayer;
+  // hard-coding for now
+  currentPlayer = playerOne;
+
+  console.log(`Hi, ${playerOne.name}, you are ${playerOne.marker}!`);
+
+  GameBoard.createGameboard();
+  GameBoard.displayGameboard();
+
+  function playTurn(coords) {
+    console.log("hi");
+    console.log(coords);
+    GameBoard.updateGameboard(coords, playerOne.marker);
+  }
+
+  function switchPlayer() {
+    if (currentPlayer === playerOne) {
+      currentPlayer = playerTwo;
+    } else if (currentPlayer === playerTwo) {
+      currentPlayer = playerOne;
+    }
+    console.log(`It's ${currentPlayer.name}'s turn!`);
+  }
+  playTurn([1, 1]);
+  switchPlayer();
+
   return {};
 }
 
@@ -75,4 +113,4 @@ function initializeGame() {
 // GameBoard.displayGameboard();
 //GameBoard.checkForWinner();
 // GameBoard.updateGameboard([2, 2], "X");
-//initializeGame();
+const game = initializeGame("Seraphina", "X");
