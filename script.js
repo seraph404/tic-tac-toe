@@ -9,7 +9,6 @@ const GameBoard = (() => {
         board[y][x] = "_";
       }
     }
-    displayGameboard();
   }
 
   // hard-coded board for debugging
@@ -20,7 +19,6 @@ const GameBoard = (() => {
   // ];
 
   function displayGameboard() {
-    console.log(`==== GAMEBOARD ====`);
     let num = 1;
     console.log(`\n    1   2   3`);
     // loop through each row in the board
@@ -37,11 +35,17 @@ const GameBoard = (() => {
     const row = move[0];
     const col = move[1];
 
-    // add checks here later OR do input sanitization eventually
-    board[row][col] = marker;
+    // only allow addition if board is blank
+    if (board[row][col] === "_") {
+      board[row][col] = marker;
+    }
 
-    logGameState("Board updated");
     displayGameboard();
+    return false;
+  }
+
+  function isBoardFull() {
+    return getAvailableCoords().length === 0;
   }
 
   function checkForWinner() {
@@ -68,6 +72,7 @@ const GameBoard = (() => {
         return true;
       }
     }
+
     return false; // only return false after checking all combos
   }
 
@@ -88,6 +93,7 @@ const GameBoard = (() => {
     createGameboard,
     displayGameboard,
     updateGameboard,
+    isBoardFull,
     checkForWinner,
     getAvailableCoords,
   };
@@ -97,16 +103,8 @@ function createPlayer(name, marker) {
   return { name, marker };
 }
 
-// helping to track the game state
-function logGameState(msg, { lastMove } = {}) {
-  console.log(`GAME STATE: ${msg}`);
-
-  if (lastMove) console.log(`Move coords: ${lastMove}`);
-}
-
 function initializeGame(name, marker) {
-  // set no winner by default
-  let hasWinner = false;
+  let gameOver = false;
 
   // check to ensure marker is valid (only needed for console)
   if (marker !== "X" && marker !== "O") {
@@ -121,28 +119,29 @@ function initializeGame(name, marker) {
   const playerTwo = createPlayer("Computer", playerTwoMarker);
 
   let currentPlayer;
-  // hard-coding for now
-  currentPlayer = playerOne;
 
   GameBoard.createGameboard();
-  //GameBoard.displayGameboard();
-
-  console.log(`Hi, ${playerOne.name}, you are ${playerOne.marker}!`);
-  console.log(`First player is ${currentPlayer.name}.`);
+  GameBoard.displayGameboard();
+  chooseFirstPlayer();
 
   if (currentPlayer === playerOne) {
-    console.log(`To make your move, use playTurn([X,Y])`);
-    console.log(`...where X is the row, and Y is the column`);
-    console.log(
-      `For example, to place a marker at the center position, use playTurn([2,2])`
-    );
+    console.log(`To make your move, use play(row, column)`);
+    console.log(`For example, play(2,2)`);
+  } else {
+    playTurn();
+  }
+
+  function chooseFirstPlayer() {
+    console.log("Choosing first player...");
+    currentPlayer = Math.random() < 0.5 ? playerOne : playerTwo;
+    console.log(`First player is ${currentPlayer.name}.`);
   }
 
   function playHumanTurn(coords) {
     // adjust input coords to account for zero index
     const adjusted = [coords[0] - 1, coords[1] - 1];
 
-    applyMove(adjusted, playerOne.marker);
+    return applyMove(adjusted, playerOne.marker);
   }
 
   function playComputerTurn() {
@@ -156,15 +155,19 @@ function initializeGame(name, marker) {
   }
 
   function applyMove(move, marker) {
-    GameBoard.updateGameboard(move, marker);
-    logGameState(currentPlayer.name + " has made their move.", {
-      lastMove: move,
-    });
+    const success = GameBoard.updateGameboard(move, marker);
+
+    if (!success) {
+      console.log("Invalid move! This space is already taken.");
+      return false;
+    }
+    return true;
   }
 
   function playTurn(coords) {
     if (currentPlayer === playerOne) {
-      playHumanTurn(coords);
+      const success = playHumanTurn(coords);
+      if (!success) return;
     } else {
       playComputerTurn(coords);
     }
@@ -172,6 +175,13 @@ function initializeGame(name, marker) {
     const winnerFound = GameBoard.checkForWinner();
     if (winnerFound) {
       console.log(`${currentPlayer.name} has won!`);
+      gameOver = true;
+      return; // end game
+    }
+
+    if (GameBoard.isBoardFull()) {
+      console.log("It's a tie!");
+      gameOver = true;
       return; // end game
     }
 
@@ -183,10 +193,14 @@ function initializeGame(name, marker) {
       currentPlayer = playerTwo;
       console.log(`It's ${currentPlayer.name}'s turn!`);
       // this makes the computer player auto-play
-      //playTurn();
+      setTimeout(() => {
+        playTurn();
+      }, 1000);
     } else if (currentPlayer === playerTwo) {
       currentPlayer = playerOne;
       console.log(`It's ${currentPlayer.name}'s turn!`);
+      console.log(`To make your move, use play(row, column)`);
+      console.log(`For example, play(2,2)`);
     }
   }
 
@@ -194,15 +208,22 @@ function initializeGame(name, marker) {
   //switchPlayer();
 
   return {
-    hasWinner,
     currentPlayer,
     playTurn,
+    gameOver,
   };
 }
 
-// makes user-friendly
+// user-friendly wrappers
 function start(name, marker) {
   window.game = initializeGame(name, marker);
+}
+
+function play(row, column) {
+  if (!window.game) {
+    console.log(`Please start a game first!`);
+  }
+  window.game.playTurn([row, column]);
 }
 
 console.log(`Welcome to Tic, Tac Toe: Console Edition`);
