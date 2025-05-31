@@ -111,25 +111,33 @@ function initializeGame(name, marker) {
   GameBoard.createGameboard();
   GameBoard.displayGameboard();
 
+  function playHumanTurn(coords) {
+    // adjust input coords to account for zero index
+    const adjusted = [coords[0] - 1, coords[1] - 1];
+    GameBoard.updateGameboard(adjusted, playerOne.marker);
+    logGameState(currentPlayer.name + " has made their move.", {
+      lastMove: adjusted,
+    });
+  }
+
+  function playComputerTurn() {
+    // player two actions
+    const availableCoords = GameBoard.getAvailableCoords();
+    // choose a move
+    let index = Math.floor(Math.random() * availableCoords.length);
+    const computerMove = availableCoords[index];
+    GameBoard.updateGameboard(computerMove, playerTwo.marker);
+    logGameState(currentPlayer.name + " has made their move.", {
+      lastMove: computerMove,
+    });
+  }
+
   function playTurn(coords) {
     if (currentPlayer === playerOne) {
-      // adjust input coords to account for zero index
-      const adjusted = [coords[0] - 1, coords[1] - 1];
-      GameBoard.updateGameboard(adjusted, playerOne.marker);
-      logGameState(currentPlayer.name + " has made their move.", {
-        lastMove: adjusted,
-      });
+      playHumanTurn(coords);
       // if computer turn...
     } else {
-      // player two actions
-      const availableCoords = GameBoard.getAvailableCoords();
-      // choose a move
-      let index = Math.floor(Math.random() * availableCoords.length);
-      const computerMove = availableCoords[index];
-      GameBoard.updateGameboard(computerMove, playerTwo.marker);
-      logGameState(currentPlayer.name + " has made their move.", {
-        lastMove: computerMove,
-      });
+      playComputerTurn(coords);
 
       // there is a bug where the computer can overwrite the player's move in the exact same position, look into this
     }
