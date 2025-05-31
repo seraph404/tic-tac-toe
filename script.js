@@ -31,6 +31,8 @@ const GameBoard = (() => {
     // only allow addition if board is blank
     if (board[row][col] === "_") {
       board[row][col] = marker;
+      displayGameboard();
+      return true;
     }
 
     displayGameboard();
