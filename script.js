@@ -9,6 +9,7 @@ const GameBoard = (() => {
         board[y][x] = "_";
       }
     }
+    logGameState("Board created.");
   }
 
   function displayGameboard() {
@@ -20,6 +21,7 @@ const GameBoard = (() => {
       console.log(`${num}     |${row.join("|")}|`);
       num += 1;
     });
+    logGameState("Board displayed");
   }
 
   function updateGameboard(move, marker) {
@@ -30,6 +32,8 @@ const GameBoard = (() => {
     // add checks here later OR do input sanitization eventually
     console.log(`board[row][col] is [${row}, ${col}]`);
     board[row][col] = marker;
+
+    logGameState("Board updated");
     displayGameboard();
   }
 
@@ -81,7 +85,15 @@ function createPlayer(name, marker) {
   return { name, marker };
 }
 
+// helping to track the game state
+function logGameState(msg, extra = {}) {
+  console.log(`GAME STATE: ${msg}`);
+
+  if (extra.lastMove) console.log(`Move coords: ${extra.lastMove}`);
+}
+
 function initializeGame(name, marker) {
+  logGameState("Game initialized.");
   // set no winner by default
   let hasWinner = false;
 
@@ -104,18 +116,22 @@ function initializeGame(name, marker) {
       // adjust input coords to account for zero index
       const adjusted = [coords[0] - 1, coords[1] - 1];
       GameBoard.updateGameboard(adjusted, playerOne.marker);
+      logGameState(currentPlayer.name + " has made their move.", {
+        lastMove: adjusted,
+      });
       // if computer turn...
     } else {
       // player two actions
-      GameBoard.getAvailableCoords();
+      const availableCoords = GameBoard.getAvailableCoords();
       // choose a move
-      let index = Math.floor(
-        Math.random() * GameBoard.getAvailableCoords().length
-      );
-      GameBoard.updateGameboard(
-        GameBoard.getAvailableCoords()[index],
-        playerTwo.marker
-      );
+      let index = Math.floor(Math.random() * availableCoords.length);
+      const computerMove = availableCoords[index];
+      GameBoard.updateGameboard(computerMove, playerTwo.marker);
+      logGameState(currentPlayer.name + " has made their move.", {
+        lastMove: computerMove,
+      });
+
+      // there is a bug where the computer can overwrite the player's move in the exact same position, look into this
     }
   }
 
