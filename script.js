@@ -22,10 +22,12 @@ const GameBoard = (() => {
   function displayGameboard() {
     console.log(`==== GAMEBOARD ====`);
     let num = 1;
+    console.log(`\n    1   2   3`);
     // loop through each row in the board
     board.forEach((row) => {
       // display that row in the console
-      console.log(`${num}     |${row.join("|")}|`);
+      const spacedRow = row.map((cell) => ` ${cell} `).join("|");
+      console.log(`${num} |${spacedRow}|`);
       num += 1;
     });
   }
