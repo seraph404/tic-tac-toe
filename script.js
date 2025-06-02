@@ -110,6 +110,7 @@ function createPlayer(name, marker) {
 
 function initializeGame(name, marker) {
   let gameOver = false;
+  inputLocked = false;
 
   // check to ensure marker is valid (only needed for console)
   if (marker !== "X" && marker !== "O") {
@@ -133,6 +134,7 @@ function initializeGame(name, marker) {
   gameBoardDiv.addEventListener("click", clickHandler);
 
   function clickHandler() {
+    if (inputLocked || gameOver) return;
     const coords = event.target.dataset.id.split("").map(Number);
     playTurn(coords);
   }
@@ -148,9 +150,10 @@ function initializeGame(name, marker) {
 
   if (currentPlayer === playerTwo) {
     // Let the computer take the first turn after a slight delay
+    renderOutput(`It's ${currentPlayer.name}'s turn!`);
     setTimeout(() => {
       playTurn();
-    }, 500);
+    }, 1000);
   } else {
     // Let the player know it's their turn
     renderOutput(`It's ${currentPlayer.name}'s turn!`);
@@ -233,12 +236,18 @@ function initializeGame(name, marker) {
   function switchPlayer() {
     if (currentPlayer === playerOne) {
       currentPlayer = playerTwo;
+      renderOutput(`It's ${currentPlayer.name}'s turn!`);
+      inputLocked = true;
       // this makes the computer player auto-play
       setTimeout(() => {
-        if (!gameOver) playTurn();
+        if (!gameOver) {
+          playTurn();
+          inputLocked = false;
+        }
       }, 1000);
     } else if (currentPlayer === playerTwo) {
       currentPlayer = playerOne;
+      renderOutput(`It's ${currentPlayer.name}'s turn!`);
     }
   }
 
