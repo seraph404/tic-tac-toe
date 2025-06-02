@@ -1,14 +1,14 @@
 const GameBoard = (() => {
   const GRID_DIMENSION = 3;
-  //let board = [];
+  let board = [];
 
   // hard-coded board for debugging
 
-  let board = [
-    ["_", "X", "_"],
-    ["O", "_", "X"],
-    ["_", "O", "X"],
-  ];
+  // let board = [
+  //   ["_", "X", "_"],
+  //   ["O", "_", "X"],
+  //   ["_", "O", "X"],
+  // ];
 
   function createGameboard() {
     for (let y = 0; y < GRID_DIMENSION; y++) {
@@ -19,7 +19,7 @@ const GameBoard = (() => {
     }
   }
 
-  function displayGameboard() {
+  function displayGameboard(clickHandler) {
     const gameBoardDiv = document.querySelector("#game-board");
     gameBoardDiv.innerHTML = "";
 
@@ -29,6 +29,9 @@ const GameBoard = (() => {
         let gridCell = document.createElement("div");
         // assign the div a data-id of row-column
         gridCell.dataset.id = `${rowIndex}${cellIndex}`;
+        if (clickHandler) {
+          gridCell.addEventListener("click", clickHandler);
+        }
         gameBoardDiv.append(gridCell);
 
         // if cell is not a blank spot...
@@ -137,17 +140,22 @@ function initializeGame(name, marker) {
   let currentPlayer;
 
   GameBoard.createGameboard();
-  GameBoard.displayGameboard();
+  GameBoard.displayGameboard(clickHandler);
   chooseFirstPlayer();
 
-  // add event listener to gameboard
-  const gameBoardDivs = document.querySelectorAll("#game-board > div");
-  gameBoardDivs.forEach((div) => {
-    div.addEventListener("click", addMarkerToGameBoard);
-  });
+  // // add event listener to gameboard
+  // function attachCellClickListeners() {
+  //   const gameBoardDivs = document.querySelectorAll("#game-board > div");
+  //   gameBoardDivs.forEach((div) => {
+  //     div.addEventListener("click", handleCellClick);
+  //   });
+  // }
 
-  // consider moving this to be an outer-level function
-  function addMarkerToGameBoard() {
+  // // consider moving this to be an outer-level function
+  function clickHandler() {
+    // identify the cell that has been clicked
+    const coords = event.target.dataset.id;
+    console.log(coords);
     console.log(currentPlayer.marker);
     console.log(event.target);
     event.target.textContent = currentPlayer.marker;
