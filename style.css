@@ -5,14 +5,14 @@ body {
   border: 1px solid black;
   height: 606px;
   width: 606px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 }
 #game-board > div {
   border: 1px solid black;
   height: 200px;
   width: 200px;
-  display: flex;
   justify-content: center;
   align-items: center;
   font-size: 65px;
