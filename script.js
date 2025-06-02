@@ -185,12 +185,14 @@ function initializeGame(name, marker) {
     if (winnerFound) {
       renderOutput(`Game over. ${currentPlayer.name} has won!`);
       gameOver = true;
+      document.querySelector("#new-game").disabled = false;
       return true;
     }
 
     if (GameBoard.isBoardFull()) {
       renderOutput("Game over. It's a tie!");
       gameOver = true;
+      document.querySelector("#new-game").disabled = false;
       return true;
     }
 
@@ -259,7 +261,11 @@ function initializeGame(name, marker) {
 }
 
 const newGameBtn = document.querySelector("#new-game");
-newGameBtn.addEventListener("click", () => initializeGame("Seraphina", "X"));
+newGameBtn.addEventListener("click", () => {
+  const name = prompt("What should we call you?");
+  initializeGame(name, "X");
+  newGameBtn.disabled = true;
+});
 
 // starts the game with a blank grid
 GameBoard.displayGameboard();
