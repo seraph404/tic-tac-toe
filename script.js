@@ -19,7 +19,7 @@ const GameBoard = (() => {
     }
   }
 
-  function displayGameboard(clickHandler) {
+  function displayGameboard() {
     const gameBoardDiv = document.querySelector("#game-board");
     gameBoardDiv.innerHTML = "";
 
@@ -29,9 +29,6 @@ const GameBoard = (() => {
         let gridCell = document.createElement("div");
         // assign the div a data-id of row-column
         gridCell.dataset.id = `${rowIndex}${cellIndex}`;
-        if (clickHandler) {
-          gridCell.addEventListener("click", clickHandler);
-        }
         gameBoardDiv.append(gridCell);
 
         // if cell is not a blank spot...
@@ -143,15 +140,9 @@ function initializeGame(name, marker) {
   GameBoard.displayGameboard(clickHandler);
   chooseFirstPlayer();
 
-  // // add event listener to gameboard
-  // function attachCellClickListeners() {
-  //   const gameBoardDivs = document.querySelectorAll("#game-board > div");
-  //   gameBoardDivs.forEach((div) => {
-  //     div.addEventListener("click", handleCellClick);
-  //   });
-  // }
+  const gameBoardDiv = document.querySelector("#game-board");
+  gameBoardDiv.addEventListener("click", clickHandler);
 
-  // // consider moving this to be an outer-level function
   function clickHandler() {
     // identify the cell that has been clicked
     const coords = event.target.dataset.id;
