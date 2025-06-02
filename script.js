@@ -45,6 +45,7 @@ const GameBoard = (() => {
 
   function updateGameboard(move, marker) {
     // account for zero index
+    console.log(`Move is... ${move}`);
     const row = move[0];
     const col = move[1];
 
@@ -145,11 +146,17 @@ function initializeGame(name, marker) {
 
   function clickHandler() {
     // identify the cell that has been clicked
-    const coords = event.target.dataset.id;
-    console.log(coords);
-    console.log(currentPlayer.marker);
-    console.log(event.target);
-    event.target.textContent = currentPlayer.marker;
+    const coords = event.target.dataset.id.split("").map(Number);
+    //console.log("Click coords:", coords);
+    playTurn(coords);
+    //console.log(currentPlayer.marker);
+    //console.log(event.target);
+    //event.target.textContent = currentPlayer.marker;
+  }
+
+  function renderOutput(output) {
+    const outputDiv = document.querySelector("#output");
+    outputDiv.textContent = output;
   }
 
   if (currentPlayer === playerOne) {
@@ -162,14 +169,11 @@ function initializeGame(name, marker) {
   function chooseFirstPlayer() {
     console.log("Choosing first player...");
     currentPlayer = Math.random() < 0.5 ? playerOne : playerTwo;
-    console.log(`First player is ${currentPlayer.name}.`);
+    renderOutput(`First player is ${currentPlayer.name}.`);
   }
 
   function playHumanTurn(coords) {
-    // adjust input coords to account for zero index
-    const adjusted = [coords[0] - 1, coords[1] - 1];
-
-    return applyMove(adjusted, playerOne.marker);
+    return applyMove(coords, playerOne.marker);
   }
 
   function playComputerTurn() {
@@ -199,6 +203,7 @@ function initializeGame(name, marker) {
 
     if (GameBoard.isBoardFull()) {
       console.log("It's a tie!");
+      renderOutput("Game over. It's a tie!");
       gameOver = true;
       return true;
     }
@@ -224,6 +229,7 @@ function initializeGame(name, marker) {
   }
 
   function playTurn(coords) {
+    console.log(`coords is ${coords}`);
     if (gameOver) {
       console.log(`Game is already over. Please start a new game.`);
       return;
@@ -243,14 +249,14 @@ function initializeGame(name, marker) {
   function switchPlayer() {
     if (currentPlayer === playerOne) {
       currentPlayer = playerTwo;
-      console.log(`It's ${currentPlayer.name}'s turn!`);
+      renderOutput(`It's ${currentPlayer.name}'s turn!`);
       // this makes the computer player auto-play
       setTimeout(() => {
         if (!gameOver) playTurn();
       }, 1000);
     } else if (currentPlayer === playerTwo) {
       currentPlayer = playerOne;
-      console.log(`It's ${currentPlayer.name}'s turn!`);
+      renderOutput(`It's ${currentPlayer.name}'s turn!`);
       console.log(`To make your move, use play(row, column)`);
       console.log(`For example, play(2,2)`);
     }
@@ -276,9 +282,9 @@ function play(row, column) {
   window.game.playTurn([row, column]);
 }
 
-console.log(`Welcome to Tic, Tac Toe: Console Edition`);
-console.log(`To begin a game, use start(name, marker)`);
-console.log(`For example: start('Seraphina', 'X')`);
+// console.log(`Welcome to Tic, Tac Toe: Console Edition`);
+// console.log(`To begin a game, use start(name, marker)`);
+// console.log(`For example: start('Seraphina', 'X')`);
 
 const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", () => initializeGame("Seraphina", "X"));
