@@ -1,6 +1,14 @@
 const GameBoard = (() => {
   const GRID_DIMENSION = 3;
-  let board = [];
+  //let board = [];
+
+  // hard-coded board for debugging
+
+  let board = [
+    ["_", "X", "_"],
+    ["O", "_", "X"],
+    ["_", "O", "X"],
+  ];
 
   function createGameboard() {
     for (let y = 0; y < GRID_DIMENSION; y++) {
@@ -12,20 +20,27 @@ const GameBoard = (() => {
   }
 
   function displayGameboard() {
-    // let num = 1;
-    // console.log(`\n    1   2   3`);
-    // // loop through each row in the board
-    // board.forEach((row) => {
-    //   // display that row in the console
-    //   const spacedRow = row.map((cell) => ` ${cell} `).join("|");
-    //   console.log(`${num} |${spacedRow}|`);
-    //   num += 1;
-    // });
     const gameBoardDiv = document.querySelector("#game-board");
-    for (let i = 0; i < GRID_DIMENSION * GRID_DIMENSION; i++) {
-      let div = document.createElement("div");
-      gameBoardDiv.append(div);
-    }
+    gameBoardDiv.innerHTML = "";
+
+    // populates the grid according to the board array
+    board.forEach((row, rowIndex) => {
+      row.forEach((cell, cellIndex) => {
+        let gridCell = document.createElement("div");
+        // assign the div a data-id of row-column
+        gridCell.dataset.id = `${rowIndex}${cellIndex}`;
+        gameBoardDiv.append(gridCell);
+
+        // if cell is not a blank spot...
+        if (cell !== "_") {
+          console.log("Not blank!");
+          let markerCell = document.createElement("div");
+          markerCell.textContent = cell;
+          markerCell.classList.add("marker-cell");
+          gridCell.append(markerCell);
+        }
+      });
+    });
   }
 
   function updateGameboard(move, marker) {
