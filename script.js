@@ -2,14 +2,6 @@ const GameBoard = (() => {
   const GRID_DIMENSION = 3;
   let board = [];
 
-  // hard-coded board for debugging
-
-  // let board = [
-  //   ["_", "X", "_"],
-  //   ["O", "_", "X"],
-  //   ["_", "O", "X"],
-  // ];
-
   function createGameboard() {
     for (let y = 0; y < GRID_DIMENSION; y++) {
       board[y] = [];
@@ -33,7 +25,6 @@ const GameBoard = (() => {
 
         // if cell is not a blank spot...
         if (cell !== "_") {
-          console.log("Not blank!");
           let markerCell = document.createElement("div");
           markerCell.textContent = cell;
           markerCell.classList.add("marker-cell");
@@ -44,8 +35,6 @@ const GameBoard = (() => {
   }
 
   function updateGameboard(move, marker) {
-    // account for zero index
-    console.log(`Move is... ${move}`);
     const row = move[0];
     const col = move[1];
 
@@ -120,7 +109,6 @@ function createPlayer(name, marker) {
 }
 
 function initializeGame(name, marker) {
-  console.log("Game initialized");
   let gameOver = false;
 
   // check to ensure marker is valid (only needed for console)
@@ -137,21 +125,16 @@ function initializeGame(name, marker) {
 
   let currentPlayer;
 
-  GameBoard.createGameboard();
-  GameBoard.displayGameboard(clickHandler);
   chooseFirstPlayer();
+  GameBoard.createGameboard();
+  GameBoard.displayGameboard();
 
   const gameBoardDiv = document.querySelector("#game-board");
   gameBoardDiv.addEventListener("click", clickHandler);
 
   function clickHandler() {
-    // identify the cell that has been clicked
     const coords = event.target.dataset.id.split("").map(Number);
-    //console.log("Click coords:", coords);
     playTurn(coords);
-    //console.log(currentPlayer.marker);
-    //console.log(event.target);
-    //event.target.textContent = currentPlayer.marker;
   }
 
   function renderOutput(output) {
@@ -159,17 +142,18 @@ function initializeGame(name, marker) {
     outputDiv.textContent = output;
   }
 
-  if (currentPlayer === playerOne) {
-    console.log(`To make your move, use play(row, column)`);
-    console.log(`For example, play(2,2)`);
-  } else {
-    playTurn();
+  function chooseFirstPlayer() {
+    currentPlayer = Math.random() < 0.5 ? playerOne : playerTwo;
   }
 
-  function chooseFirstPlayer() {
-    console.log("Choosing first player...");
-    currentPlayer = Math.random() < 0.5 ? playerOne : playerTwo;
-    renderOutput(`First player is ${currentPlayer.name}.`);
+  if (currentPlayer === playerTwo) {
+    // Let the computer take the first turn after a slight delay
+    setTimeout(() => {
+      playTurn();
+    }, 500);
+  } else {
+    // Let the player know it's their turn
+    renderOutput(`It's ${currentPlayer.name}'s turn!`);
   }
 
   function playHumanTurn(coords) {
@@ -196,13 +180,12 @@ function initializeGame(name, marker) {
   function evaluateGameState() {
     const winnerFound = GameBoard.checkForWinner();
     if (winnerFound) {
-      console.log(`${currentPlayer.name} has won!`);
+      renderOutput(`Game over. ${currentPlayer.name} has won!`);
       gameOver = true;
       return true;
     }
 
     if (GameBoard.isBoardFull()) {
-      console.log("It's a tie!");
       renderOutput("Game over. It's a tie!");
       gameOver = true;
       return true;
@@ -229,11 +212,12 @@ function initializeGame(name, marker) {
   }
 
   function playTurn(coords) {
-    console.log(`coords is ${coords}`);
     if (gameOver) {
       console.log(`Game is already over. Please start a new game.`);
       return;
     }
+
+    renderOutput(`It's ${currentPlayer.name}'s turn!`); //
 
     if (currentPlayer === playerOne) {
       const success = playHumanTurn(coords);
@@ -249,16 +233,12 @@ function initializeGame(name, marker) {
   function switchPlayer() {
     if (currentPlayer === playerOne) {
       currentPlayer = playerTwo;
-      renderOutput(`It's ${currentPlayer.name}'s turn!`);
       // this makes the computer player auto-play
       setTimeout(() => {
         if (!gameOver) playTurn();
       }, 1000);
     } else if (currentPlayer === playerTwo) {
       currentPlayer = playerOne;
-      renderOutput(`It's ${currentPlayer.name}'s turn!`);
-      console.log(`To make your move, use play(row, column)`);
-      console.log(`For example, play(2,2)`);
     }
   }
 
@@ -268,23 +248,6 @@ function initializeGame(name, marker) {
     gameOver,
   };
 }
-
-// user-friendly wrappers for terminal
-function start(name, marker) {
-  window.game = initializeGame(name, marker);
-}
-
-function play(row, column) {
-  if (!window.game) {
-    console.log(`Please start a game first!`);
-    return;
-  }
-  window.game.playTurn([row, column]);
-}
-
-// console.log(`Welcome to Tic, Tac Toe: Console Edition`);
-// console.log(`To begin a game, use start(name, marker)`);
-// console.log(`For example: start('Seraphina', 'X')`);
 
 const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", () => initializeGame("Seraphina", "X"));
