@@ -12,15 +12,20 @@ const GameBoard = (() => {
   }
 
   function displayGameboard() {
-    let num = 1;
-    console.log(`\n    1   2   3`);
-    // loop through each row in the board
-    board.forEach((row) => {
-      // display that row in the console
-      const spacedRow = row.map((cell) => ` ${cell} `).join("|");
-      console.log(`${num} |${spacedRow}|`);
-      num += 1;
-    });
+    // let num = 1;
+    // console.log(`\n    1   2   3`);
+    // // loop through each row in the board
+    // board.forEach((row) => {
+    //   // display that row in the console
+    //   const spacedRow = row.map((cell) => ` ${cell} `).join("|");
+    //   console.log(`${num} |${spacedRow}|`);
+    //   num += 1;
+    // });
+    const gameBoardDiv = document.querySelector("#game-board");
+    for (let i = 0; i < GRID_DIMENSION * GRID_DIMENSION; i++) {
+      let div = document.createElement("div");
+      gameBoardDiv.append(div);
+    }
   }
 
   function updateGameboard(move, marker) {
@@ -99,6 +104,7 @@ function createPlayer(name, marker) {
 }
 
 function initializeGame(name, marker) {
+  console.log("Game initialized");
   let gameOver = false;
 
   // check to ensure marker is valid (only needed for console)
@@ -118,6 +124,19 @@ function initializeGame(name, marker) {
   GameBoard.createGameboard();
   GameBoard.displayGameboard();
   chooseFirstPlayer();
+
+  // add event listener to gameboard
+  const gameBoardDivs = document.querySelectorAll("#game-board > div");
+  gameBoardDivs.forEach((div) => {
+    div.addEventListener("click", addMarkerToGameBoard);
+  });
+
+  // consider moving this to be an outer-level function
+  function addMarkerToGameBoard() {
+    console.log(currentPlayer.marker);
+    console.log(event.target);
+    event.target.textContent = currentPlayer.marker;
+  }
 
   if (currentPlayer === playerOne) {
     console.log(`To make your move, use play(row, column)`);
@@ -246,3 +265,9 @@ function play(row, column) {
 console.log(`Welcome to Tic, Tac Toe: Console Edition`);
 console.log(`To begin a game, use start(name, marker)`);
 console.log(`For example: start('Seraphina', 'X')`);
+
+const newGameBtn = document.querySelector("#new-game");
+newGameBtn.addEventListener("click", () => initializeGame("Seraphina", "X"));
+
+// starts the game with a blank grid
+GameBoard.displayGameboard();
