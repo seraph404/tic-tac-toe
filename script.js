@@ -251,11 +251,10 @@ function initializeGame(name, marker) {
 let playerName = undefined;
 const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", () => {
-  console.log(`${name} is ...`);
   if (playerName === undefined) {
     playerName = prompt("What should we call you?");
   }
-  initializeGame(name, "X");
+  initializeGame(playerName, "X");
   newGameBtn.disabled = true;
 });
 
