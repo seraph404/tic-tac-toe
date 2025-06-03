@@ -182,15 +182,15 @@ function initializeGame(name, marker) {
 
   function evaluateGameState() {
     const winnerFound = GameBoard.checkForWinner();
-    if (winnerFound) {
-      renderOutput(`Game over. ${currentPlayer.name} has won!`);
-      gameOver = true;
-      document.querySelector("#new-game").disabled = false;
-      return true;
-    }
 
-    if (GameBoard.isBoardFull()) {
-      renderOutput("Game over. It's a tie!");
+    if (winnerFound || GameBoard.isBoardFull()) {
+      if (winnerFound) {
+        renderOutput(`Game over. ${currentPlayer.name} has won!`);
+      }
+      if (!winnerFound && GameBoard.isBoardFull()) {
+        renderOutput("Game over. It's a tie!");
+      }
+
       gameOver = true;
       document.querySelector("#new-game").disabled = false;
       return true;
