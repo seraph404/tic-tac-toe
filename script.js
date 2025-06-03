@@ -110,7 +110,7 @@ function createPlayer(name, marker) {
 
 function initializeGame(name, marker) {
   let gameOver = false;
-  inputLocked = false;
+  let inputLocked = false;
 
   // check to ensure marker is valid (only needed for console)
   if (marker !== "X" && marker !== "O") {
@@ -176,10 +176,6 @@ function initializeGame(name, marker) {
     evaluateGameState();
   }
 
-  function isWithinBounds([row, col]) {
-    return row >= 0 && row < 3 && col >= 0 && col < 3;
-  }
-
   function evaluateGameState() {
     const winnerFound = GameBoard.checkForWinner();
 
@@ -200,13 +196,6 @@ function initializeGame(name, marker) {
   }
 
   function applyMove(move, marker) {
-    if (!isWithinBounds(move)) {
-      console.log(
-        "Invalid move! Each coordinate must be a number between 1-3."
-      );
-      return false;
-    }
-
     const success = GameBoard.updateGameboard(move, marker);
 
     if (!success) {
@@ -259,12 +248,12 @@ function initializeGame(name, marker) {
     gameOver,
   };
 }
-let name = undefined;
+let playerName = undefined;
 const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", () => {
   console.log(`${name} is ...`);
-  if (name === undefined) {
-    name = prompt("What should we call you?");
+  if (playerName === undefined) {
+    playerName = prompt("What should we call you?");
   }
   initializeGame(name, "X");
   newGameBtn.disabled = true;
