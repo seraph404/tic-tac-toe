@@ -1,13 +1,18 @@
 body {
   font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 #game-board {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   height: 606px;
   width: 606px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  text-align: center;
 }
 #game-board > div {
   border: 1px solid black;
@@ -19,4 +24,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+#output {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
