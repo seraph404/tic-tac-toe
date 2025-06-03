@@ -259,10 +259,13 @@ function initializeGame(name, marker) {
     gameOver,
   };
 }
-
+let name = undefined;
 const newGameBtn = document.querySelector("#new-game");
 newGameBtn.addEventListener("click", () => {
-  const name = prompt("What should we call you?");
+  console.log(`${name} is ...`);
+  if (name === undefined) {
+    name = prompt("What should we call you?");
+  }
   initializeGame(name, "X");
   newGameBtn.disabled = true;
 });
